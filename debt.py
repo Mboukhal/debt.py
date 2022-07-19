@@ -43,8 +43,20 @@ def print_list_all():
 		pause('Press any key to continue...\n')
 		return
 	print ("No file named \{debt.csv\}")
-	
 
+def delet_all():
+	print_list()
+	confirm = str(input('Are you sure you want to delet all [Yes/No]: ' or 'No'))
+	if confirm == 'Yes':
+		confirm = str(input('last stape delet all [Yes/No]: ' or 'No'))
+		if confirm == 'Yes':
+			os.remove('debt.csv')
+			pause('debt.csv is deleted!')
+			exit(0)
+	
+		
+		
+	
 def delet_from_csv():
 	if os.path.exists('debt.csv'):
 		df = pd.read_csv('debt.csv')
@@ -73,7 +85,8 @@ def main():
 		print("\t1. Add debt.")
 		print("\t2. Delet debt.")
 		print("\t3. List debt.")
-		print("\t4. To quit.")
+		print("\t4. delete All.")
+		print("\t5. To quit.")
 		print()
 		cmd = input('>> ')
 		if cmd == '1':
@@ -86,6 +99,9 @@ def main():
 			os.system('clear')
 			print_list_all()
 		if cmd == '4':
+			os.system('clear')
+			delet_all()
+		if cmd == '5':
 			exit(0)
 			
 if __name__ == '__main__':
