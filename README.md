@@ -11,4 +11,4 @@ Install pandas:
 pip install pandas
 
 cd to the directory  
-python3 ./debt.py
+python3 debt.py
