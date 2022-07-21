@@ -38,14 +38,22 @@ def add_to_csv():
 	print_list()
 	new_row = { 'Name':[], 'Debt':[], 'Date':[] }
 	print('Enter [C] for cancel\n\n')
-	new_row['Name'] = [str((input('Enter Name:\n\t>> ')))]
+	new_row['Name'] = [(input('Enter Name:\n\t>> '))]
 	if len(new_row['Name'][0]) == 1 and new_row['Name'][0][0] == 'C':
 		return
-	new_row['Debt'][0] = 0
-	while int(new_row['Debt'][0]) or float(new_row['Debt'][0]):
+	x = 1
+	while x:
 		new_row['Debt'] = [(input('Enter debt:\n\t>> '))]
-	if (not (new_row['Debt'][0].isnumeric())) and new_row['Debt'][0][0] == 'C':
-		return
+		if len(new_row['Debt'][0]) == 1 and new_row['Debt'][0][0] == 'C':
+			return
+		try:
+			new_row['Debt'][0] = float(new_row['Debt'][0])
+		except ValueError:
+			print ('`', new_row['Debt'][0], '` not expected expresion!')
+			# print (new_row['Debt'][0])
+		else:
+			x = 0
+			
 	new_row['Debt'][0] = str(new_row['Debt'][0]) + '$'
 	date_c = time.strftime("%d-%m-%Y %H:%M")
 	new_row['Date'] = [(input(f'Enter date default date [{date_c}]:\n\t>> ') or date_c)]
