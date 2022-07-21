@@ -10,5 +10,5 @@ https://docs.python-guide.org/starting/install3/osx/
 Install pandas:  
 pip install pandas
 
-cd to the directory  
+cd debt_tool  
 python3 debt.py
