@@ -40,7 +40,7 @@ def print_list():
 	
 def add_to_csv():
 	print_list()
-	new_row = { 'Name':[], 'Debt':[], 'Date':[] }
+	new_row = { 'Name':[], 'Debt':[], 'Date':[], 'Phone':[] }
 	print('Enter [C] for cancel\n\n')
 	new_row['Name'] = [(input('Enter Name:\n\t>> '))]
 	if len(new_row['Name'][0]) == 1 and new_row['Name'][0][0] == 'C':
@@ -61,7 +61,10 @@ def add_to_csv():
 	new_row['Date'] = [(input(f'Enter date default date [{date_c}]:\n\t>> ') or date_c)]
 	if len(new_row['Date'][0]) == 1 and new_row['Date'][0][0] == 'C':
 		return
-	log_file_add(f"Debt added: [{new_row['Name'][0]}] [{new_row['Debt'][0]}] [{new_row['Date'][0]}] ")
+	new_row['Phone'] = [(input(f'Enter phone number:\n\t>> ') or None)]
+	if len(new_row['Phone'][0]) == 1 and new_row['Phone'][0][0] == 'C':
+		return
+	log_file_add(f"Debt added: [{new_row['Name'][0]}] [{new_row['Debt'][0]}] [{new_row['Date'][0]}] [{new_row['Phone'][0]}] ")
 	new_df = pd.DataFrame(new_row)
 	print (new_row)
 	if not os.path.exists(dir_d):
@@ -86,8 +89,8 @@ def print_list_all():
 def delet_all():
 	if os.path.exists(csv_file):
 		print_list()
-		confirm = str(input('Are you sure you want to delet all [ yes / no ]: ' or 'no'))
-		if confirm == 'yes':
+		confirm = str(input('Are you sure you want to delet all [ y/n ]: ' or 'n'))
+		if confirm == 'y':
 			csv = str(input(f'Press [y] to remove {csv_file}:\n\t>> ' or ''))
 			if csv == 'y':
 				os.remove(csv_file)
@@ -145,8 +148,8 @@ def main():
 			delet_all()
 		if cmd == '':
 			print("\n")
-			cmd = input('Enter [y] to conferme quit: ' or n)
-			if cmd == 'y':
+			cmd = input('Enter [q] to quit: ' or n)
+			if cmd == 'q':
 				log_file_add("Debt closed")
 				exit(0)
 
