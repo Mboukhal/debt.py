@@ -6,6 +6,8 @@ function install_python()
 	read install
 	if [ $install = "y" ] ; then
 		brew install python3
+	else
+		exit 127
 	fi
 }
 
@@ -16,6 +18,8 @@ function install_brew()
 	read install
 	if [ $install = "y" ] ; then
 		/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+	else
+		exit 127
 	fi
 }
 
@@ -36,5 +40,5 @@ fi
 mkdir ~/debt
 cp debt.py ~/debt
 python3 -m pip install pandas
-echo "alias debt=\"python3 ~/debt/debt.py\"" >> ~/.zshrc
+echo "alias debt=\'python3 ~/debt/debt.py\'" >> ~/.zshrc
 source ~/.zshrc
