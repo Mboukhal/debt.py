@@ -6,30 +6,30 @@
 
 """
 
-import os
-import sys
-import time
-import pandas as pd
+from os import path, mkdir
+from sys import argv
+from time import strftime
+from pandas import read_csv, DataFrame
 from utils import *
 
-main_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
-csv_file = os.path.join(main_dir, 'src/debt.csv')
-log_file = os.path.join(main_dir, 'src/debt.log')
-dir_d = os.path.join(main_dir, 'src')
+main_dir = path.abspath(path.dirname(argv[0]))
+csv_file = path.join(main_dir, 'src/debt.csv')
+log_file = path.join(main_dir, 'src/debt.log')
+dir_d = path.join(main_dir, 'src')
 
-if not os.path.exists(dir_d):
-	os.mkdir(dir_d, 0o777)
+if not path.exists(dir_d):
+	mkdir(dir_d, 0o777)
 
 
 def log_file_add(msg_log):
-	msg_log = msg_log + ": " + time.strftime("%d-%m-%Y %H:%M:%S") + '\n'
+	msg_log = msg_log + ": " + strftime("%d-%m-%Y %H:%M:%S") + '\n'
 	with open(log_file, 'a') as f:
 		f.write(msg_log)
 	# print (msg_log)
 
 def print_list():
-	if os.path.exists(csv_file):
-		df = pd.read_csv(csv_file)
+	if path.exists(csv_file):
+		df = read_csv(csv_file)
 		print(df.tail(5))
 		print('\n')
 		return
@@ -57,7 +57,7 @@ def add_to_csv():
 			x = 0
 	
 	new_row['Debt'][0] = "${:,.2f}".format(float(new_row['Debt'][0])) 
-	date_c = time.strftime("%d-%m-%Y %H:%M")
+	date_c = strftime("%d-%m-%Y %H:%M")
 	new_row['Date'] = [(input(f'Enter date default date [{date_c}]:\n\t>> ') or date_c)]
 	if len(new_row['Date'][0]) == 1 and new_row['Date'][0][0] == 'C':
 		return
@@ -66,11 +66,11 @@ def add_to_csv():
 	if len(new_row['Phone'][0]) == 1 and new_row['Phone'][0][0] == 'C':
 		return
 	log_file_add(f"Debt added: [{new_row['Name'][0]}] [{new_row['Debt'][0]}] [{new_row['Date'][0]}] [{new_row['Phone'][0]}] ")
-	new_df = pd.DataFrame(new_row)
-	if not os.path.exists(dir_d):
-		os.mkdir(dir_d, 0o777)
-	if os.path.exists(csv_file):
-		df = pd.read_csv(csv_file)
+	new_df = DataFrame(new_row)
+	if not path.exists(dir_d):
+		mkdir(dir_d, 0o777)
+	if path.exists(csv_file):
+		df = read_csv(csv_file)
 		df = df.append(new_df, ignore_index=True)
 		df.to_csv(csv_file, index=False)
 		return
@@ -78,8 +78,8 @@ def add_to_csv():
 	
 def print_list_all():
 	log_file_add("List viewed")
-	if os.path.exists(csv_file):
-		df = pd.read_csv(csv_file)
+	if path.exists(csv_file):
+		df = read_csv(csv_file)
 		print(df.sort_values(by=['Name']))
 		print('\n')
 		debt_list = df['Debt'].tolist()
@@ -94,25 +94,25 @@ def print_list_all():
 	print ("No file named \{debt.csv\}")
 
 def delet_all():
-	if os.path.exists(csv_file):
+	if path.exists(csv_file):
 		print_list()
 		confirm = str(input('Are you sure you want to delet all [ y/n ]: ' or ''))
 		if confirm == 'y':
 			csv = str(input(f'Press [y] to remove {csv_file}:\n\t>> ' or ''))
 			if csv == 'y':
-				os.remove(csv_file)
+				remove(csv_file)
 			log = str(input(f'Press [y] to remove {log_file}:\n\t>> ' or ''))
 			if log == 'y':
-				os.remove(log_file)
+				remove(log_file)
 			if log == 'y' and csv == 'y':
-				os.rmdir(dir_d)
+				rmdir(dir_d)
 				pause('All data deleted.\n')
 			return
 	pause('Deleting canceled!\n')
 	
 def delet_from_csv():
-	if os.path.exists(csv_file):
-		df = pd.read_csv(csv_file)
+	if path.exists(csv_file):
+		df = read_csv(csv_file)
 		print(df)
 		print('\n')
 		choise = [int(input('Enter id to remove or enter to cancele:\n\t>> '))]
@@ -142,24 +142,21 @@ def main():
 		print("\t2. List debt.")
 		print("\t3. Delet debt.")
 		print("\t4. delete All.")
-		print("\nPress Enter to quit.")
+		print("\tq. quit.")
 		print()
 		cmd = input('>> ')
 		clear_console()
-		if cmd == '1':
+		if cmd[0] == '1':
 			add_to_csv()
-		if cmd == '2':
+		if cmd[0] == '2':
 			print_list_all()
-		if cmd == '3':
+		if cmd[0] == '3':
 			delet_from_csv()
-		if cmd == '4':
+		if cmd[0] == '4':
 			delet_all()
-		if cmd == '':
-			print("\n")
-			cmd = input('Enter [q] to quit: ' or n)
-			if cmd == 'q':
-				log_file_add("Debt closed")
-				exit(0)
+		if cmd[0] == 'q':
+			log_file_add("Debt closed")
+			exit(0)
 
 if __name__ == '__main__':
 	main()
