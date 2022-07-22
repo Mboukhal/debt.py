@@ -37,8 +37,10 @@ def print_list():
 	
 def add_to_csv():
 	print_list()
+	# list of culmns
 	new_row = { 'Name':[], 'Debt':[], 'Date':[], 'Phone':[] }
 	print('Enter [C] for cancel\n\n')
+	
 	new_row['Name'] = [(input('Enter Name:\n\t>> '))]
 	if len(new_row['Name'][0]) == 1 and new_row['Name'][0][0] == 'C':
 		return
@@ -53,17 +55,18 @@ def add_to_csv():
 			print ('`', new_row['Debt'][0], '` not expected expresion!')
 		else:
 			x = 0
+	
 	new_row['Debt'][0] = "${:,.2f}".format(float(new_row['Debt'][0])) 
 	date_c = time.strftime("%d-%m-%Y %H:%M")
 	new_row['Date'] = [(input(f'Enter date default date [{date_c}]:\n\t>> ') or date_c)]
 	if len(new_row['Date'][0]) == 1 and new_row['Date'][0][0] == 'C':
 		return
+	
 	new_row['Phone'] = [(input(f'Enter phone number:\n\t>> ') or 'Non')]
 	if len(new_row['Phone'][0]) == 1 and new_row['Phone'][0][0] == 'C':
 		return
 	log_file_add(f"Debt added: [{new_row['Name'][0]}] [{new_row['Debt'][0]}] [{new_row['Date'][0]}] [{new_row['Phone'][0]}] ")
 	new_df = pd.DataFrame(new_row)
-	print (new_row)
 	if not os.path.exists(dir_d):
 		os.mkdir(dir_d, 0o777)
 	if os.path.exists(csv_file):
