@@ -6,19 +6,19 @@
 
 """
 
-from os import path, mkdir
+from os import path, mkdir, remove, rmdir
 from sys import argv
 from time import strftime
 from pandas import read_csv, DataFrame
 from utils import *
 
 main_dir = path.abspath(path.dirname(argv[0]))
-csv_file = path.join(main_dir, 'src/debt.csv')
-log_file = path.join(main_dir, 'src/debt.log')
-dir_d = path.join(main_dir, 'src')
+src_dir = path.join(main_dir, 'src')
+csv_file = path.join(src_dir, 'debt.csv')
+log_file = path.join(src_dir, 'debt.log')
 
-if not path.exists(dir_d):
-	mkdir(dir_d, 0o777)
+if not path.exists(src_dir):
+	mkdir(src_dir, 0o777)
 
 
 def log_file_add(msg_log):
@@ -33,7 +33,7 @@ def print_list():
 		print(df.tail(5))
 		print('\n')
 		return
-	print ("Welcome to debt saver.\n")
+	print ("Welcome to debt saver v0.1\n")
 	
 def add_to_csv():
 	print_list()
@@ -67,8 +67,8 @@ def add_to_csv():
 		return
 	log_file_add(f"Debt added: [{new_row['Name'][0]}] [{new_row['Debt'][0]}] [{new_row['Date'][0]}] [{new_row['Phone'][0]}] ")
 	new_df = DataFrame(new_row)
-	if not path.exists(dir_d):
-		mkdir(dir_d, 0o777)
+	if not path.exists(src_dir):
+		mkdir(src_dir, 0o777)
 	if path.exists(csv_file):
 		df = read_csv(csv_file)
 		df = df.append(new_df, ignore_index=True)
@@ -105,7 +105,7 @@ def delet_all():
 			if log == 'y':
 				remove(log_file)
 			if log == 'y' and csv == 'y':
-				rmdir(dir_d)
+				rmdir(src_dir)
 				pause('All data deleted.\n')
 			return
 	pause('Deleting canceled!\n')
@@ -115,7 +115,7 @@ def delet_from_csv():
 		df = read_csv(csv_file)
 		print(df)
 		print('\n')
-		choise = [int(input('Enter id to remove or enter to cancele:\n\t>> '))]
+		choise = [int(input('Enter id to remove or enter to cancel:\n\t>> '))]
 		if choise == '':
 			return
 		s = df.loc[choise[0]]
@@ -127,14 +127,16 @@ def delet_from_csv():
 			pause()
 			return
 		print(s)
-		pause('\ndeleted.')
-		df.to_csv(csv_file, index=False)
-		return
+		x = input('Press enter to confirm or [c] to cancel:\n' or 'y')
+		if x == 'y':
+			df.to_csv(csv_file, index=False)
+			pause('data deleted.\n')
+			return
 	print ("No data to delete!")
 
 def main():
 	cmd = ''
-	# log_file_add("Debt opened")
+	log_file_add("Debt opened")
 	while cmd != 'q':
 		clear_console()
 		print_list()
@@ -142,19 +144,25 @@ def main():
 		print("\t2. List debt.")
 		print("\t3. Delet debt.")
 		print("\t4. delete All.")
+		print("\t5. open source folder.")
 		print("\tq. quit.")
 		print()
 		cmd = input('>> ')
+		if len(cmd) > 1:
+			cmd = cmd[0]
 		clear_console()
-		if cmd[0] == '1':
+		if cmd == '1':
 			add_to_csv()
-		if cmd[0] == '2':
+		if cmd == '2':
 			print_list_all()
-		if cmd[0] == '3':
+		if cmd == '3':
 			delet_from_csv()
-		if cmd[0] == '4':
+		if cmd == '4':
 			delet_all()
-		if cmd[0] == 'q':
+		if cmd == '5':
+			open_src(src_dir)
+			log_file_add("Source folder opened")
+		if cmd == 'q':
 			log_file_add("Debt closed")
 			exit(0)
 
