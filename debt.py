@@ -7,22 +7,19 @@
 """
 
 import os
+import sys
 import time
 import pandas as pd
+from utils import *
 
-csv_file = os.path.join(os.getcwd(), 'src/debt.csv')
-log_file = os.path.join(os.getcwd(), 'src/debt.log')
-dir_d = os.path.join(os.getcwd(), 'src')
+main_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+csv_file = os.path.join(main_dir, 'src/debt.csv')
+log_file = os.path.join(main_dir, 'src/debt.log')
+dir_d = os.path.join(main_dir, 'src')
+
 if not os.path.exists(dir_d):
 	os.mkdir(dir_d, 0o777)
-	
 
-print (log_file)
-def pause(msg):
-	if os.name == 'posix': # if mac os
-		os.system(f"/bin/bash -c 'read -s -n 1 -p \"{msg}\"'")
-	elif os.name == 'nt': # if windows
-		os.system(f"echo \"{msg}\" &pause>nul")
 
 def log_file_add(msg_log):
 	msg_log = msg_log + ": " + time.strftime("%d-%m-%Y %H:%M:%S") + '\n'
@@ -77,19 +74,26 @@ def add_to_csv():
 	new_df.to_csv(csv_file, index=False)
 	
 def print_list_all():
+	log_file_add("List viewed")
 	if os.path.exists(csv_file):
 		df = pd.read_csv(csv_file)
-		print(df)
+		print(df.sort_values(by=['Name']))
 		print('\n')
-		log_file_add("List viewed")
-		pause('Press any key to continue...\n')
+		debt_list = df['Debt'].tolist()
+		total = 0
+		for sum_list in debt_list:
+			total = total + float(sum_list[1:].replace(',', ''))
+		print('\n')
+		print('\t\tTotal of debts:\t${:,.2f}'.format(total))
+		print()
+		pause('Press any key to return...')
 		return
 	print ("No file named \{debt.csv\}")
 
 def delet_all():
 	if os.path.exists(csv_file):
 		print_list()
-		confirm = str(input('Are you sure you want to delet all [ y/n ]: ' or 'n'))
+		confirm = str(input('Are you sure you want to delet all [ y/n ]: ' or ''))
 		if confirm == 'y':
 			csv = str(input(f'Press [y] to remove {csv_file}:\n\t>> ' or ''))
 			if csv == 'y':
@@ -98,8 +102,7 @@ def delet_all():
 			if log == 'y':
 				os.remove(log_file)
 			if log == 'y' and csv == 'y':
-				path = os.path.join(os.getcwd(), 'src')
-				os.rmdir(path)
+				os.rmdir(dir_d)
 				pause('All data deleted.\n')
 			return
 	pause('Deleting canceled!\n')
@@ -109,12 +112,14 @@ def delet_from_csv():
 		df = pd.read_csv(csv_file)
 		print(df)
 		print('\n')
-		choise = [int(input('Enter id to remove:\n\t>> '))]
+		choise = [int(input('Enter id to remove or enter to cancele:\n\t>> '))]
+		if choise == '':
+			return
 		s = df.loc[choise[0]]
 		try:
 			df.drop(index=choise, axis=0, inplace=True)
 		except Exception:
-			os.system('clear')
+			clear_console()
 			print(f"Error {choise} not in list!")
 			pause()
 			return
@@ -126,9 +131,9 @@ def delet_from_csv():
 
 def main():
 	cmd = ''
-	log_file_add("Debt opened")
+	# log_file_add("Debt opened")
 	while cmd != 'q':
-		os.system('clear')
+		clear_console()
 		print_list()
 		print("\t1. Add debt.")
 		print("\t2. List debt.")
@@ -137,7 +142,7 @@ def main():
 		print("\nPress Enter to quit.")
 		print()
 		cmd = input('>> ')
-		os.system('clear')
+		clear_console()
 		if cmd == '1':
 			add_to_csv()
 		if cmd == '2':
