@@ -20,7 +20,6 @@ log_file = path.join(src_dir, 'debt.log')
 if not path.exists(src_dir):
 	mkdir(src_dir, 0o777)
 
-
 def log_file_add(msg_log):
 	msg_log = msg_log + ": " + strftime("%d-%m-%Y %H:%M:%S") + '\n'
 	with open(log_file, 'a') as f:
